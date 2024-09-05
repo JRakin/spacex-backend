@@ -1,8 +1,8 @@
 import { model, Schema, Document } from "mongoose";
-import { IFlight } from "../interfaces/flights.interface";
+import { ILaunch } from "../interfaces/launches.interface";
 
-const flightSchema: Schema = new Schema({
-    flightNumber: {
+const launchSchema: Schema = new Schema({
+    flight_number: {
         type: Number,
         required: true,
     },
@@ -10,12 +10,12 @@ const flightSchema: Schema = new Schema({
         type: String,
         required: true,
     },
-    flightDate: {
+    date_utc: {
         type: String,
         required: true,
     },
 });
 
-const Flight = model<IFlight & Document>('Launch', flightSchema);
+const Flight = model<ILaunch & Document>('Launch', launchSchema);
 
 export default Flight;
