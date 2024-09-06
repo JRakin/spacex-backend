@@ -1,6 +1,8 @@
 import { model, Schema, Document } from "mongoose";
 import { ILaunch } from "../interfaces/launches.interface";
 
+export interface LaunchDocument extends ILaunch, Document {}
+
 const launchSchema: Schema = new Schema({
     flight_number: {
         type: Number,
@@ -16,6 +18,6 @@ const launchSchema: Schema = new Schema({
     },
 });
 
-const Flight = model<ILaunch & Document>('Launch', launchSchema);
+const Flight = model<LaunchDocument>('Launch', launchSchema);
 
 export default Flight;

@@ -1,12 +1,11 @@
-export interface ILaunch {
-    _id: string,
-    flight_number: Number,
-    name: string,
-    date_utc: Date,
-}
+import { Request } from "express";
 
-export interface ILaunchResponse {
+export interface ILaunch {
     flight_number: number,
     name: string,
     date_utc: Date,
 }
+
+export interface LaunchRequest extends Request {
+    body: ILaunch;
+  }

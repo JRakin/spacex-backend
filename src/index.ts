@@ -12,7 +12,7 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
-// initDB();
+initDB();
 
 const launchRoute = new LaunchRoute();
 

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const launch_model_1 = __importDefault(require("../models/launch.model"));
+const mongoose_1 = __importDefault(require("mongoose"));
 class FlightService {
     constructor() {
         this.launches = launch_model_1.default;
@@ -36,8 +37,26 @@ class FlightService {
     }
     findAllLaunches() {
         return __awaiter(this, void 0, void 0, function* () {
-            const launches = yield this.launches.find();
+            const launches = yield this.launches.find().sort({ date_utc: -1 });
             return launches;
+        });
+    }
+    createLaunch(launch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const createdLaunch = yield this.launches.create(launch);
+            return createdLaunch;
+        });
+    }
+    deleteLaunchByFlightNumber(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const objId = new mongoose_1.default.Types.ObjectId(id);
+            return yield this.launches.findOneAndDelete({ _id: objId });
+        });
+    }
+    launchExists(flight_number) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const launch = yield this.launches.findOne({ flight_number });
+            return !!launch;
         });
     }
 }

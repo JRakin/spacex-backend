@@ -8,16 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const mongoUri = process.env.MONGO_URI || '';
 const initDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const mongoURI = '';
-        yield (0, mongoose_1.connect)(mongoURI);
-        console.log("DB Connected...");
+        yield (0, mongoose_1.connect)(`${mongoUri}`);
+        console.log("DB Connected successfully...");
     }
     catch (err) {
-        // Exit process with failure
+        console.log(err);
         process.exit(1);
     }
 });

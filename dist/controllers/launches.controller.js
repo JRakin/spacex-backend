@@ -34,6 +34,35 @@ class LaunchesController {
                 next(error);
             }
         });
+        this.addLaunch = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const launchData = req.body;
+                const exists = yield this.launchService.launchExists(launchData.flight_number);
+                if (exists) {
+                    return res.status(409).json({ message: 'Launch already exists' });
+                }
+                const newLaunch = yield this.launchService.createLaunch(launchData);
+                res.status(201).json(newLaunch);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.deleteLaunch = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            try {
+                const deletedLaunch = yield this.launchService.deleteLaunchByFlightNumber(id);
+                if (deletedLaunch) {
+                    res.status(200).json({ message: 'Launch deleted successfully' });
+                }
+                else {
+                    res.status(404).json({ error: 'Launch not found' });
+                }
+            }
+            catch (error) {
+                next(error);
+            }
+        });
     }
 }
 exports.default = LaunchesController;
