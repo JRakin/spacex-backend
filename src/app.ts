@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import initDB from "./utils/dbInit";
 import errorHandlerMiddleware from "./middlewares/errorHandler";
 import LaunchRoute from './routes/launch.route';
+import HealthRoute from "./routes/health.route";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ class App {
     public app: Application
     public port: number
     private launchRoute = new LaunchRoute();
+    private healthRoute = new HealthRoute();
 
     constructor(appInit: { port: number }) {
         this.app = express()
@@ -23,7 +25,8 @@ class App {
     }
 
     private routes() {
-       this.app.use('/', this.launchRoute.router);
+        this.app.use('/', this.healthRoute.router);
+        this.app.use('/launches', this.launchRoute.router);
     }
 
     private middlewares() {

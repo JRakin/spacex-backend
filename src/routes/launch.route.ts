@@ -1,28 +1,21 @@
 import { Router } from "express";
 import { Routes } from "../interfaces/routes.interface";
 import LaunchesController from "../controllers/launches.controller";
+import { validateLaunchData } from "../middlewares/validationMiddleware";
 
 class FlightRoute implements Routes {
-    public path = '/launches';
     public router = Router();
-    public launchesController = new LaunchesController()
+    public launchesController = LaunchesController.getInstance()
 
     constructor() {
         this.initRoutes();
     }
 
     private initRoutes() {
-        this.router.get(`${this.path}/all`, this.launchesController.getSpaceXLaunches);
-        this.router.get(`${this.path}`, this.launchesController.getLaunches);
-        this.router.post(`${this.path}`, this.launchesController.addLaunch);
-        this.router.delete(`${this.path}/:id`, this.launchesController.deleteLaunch);
-        // In your routes file or directly in app setup
-        this.router.get('/test-error', (req, res, next) => {
-            const error = new Error('Not Found');
-            res.status(404);
-            next(error);
-        });
-
+        this.router.get(`/all`, this.launchesController.getSpaceXLaunches);
+        this.router.get(`/`, this.launchesController.getLaunches);
+        this.router.post(`/`, validateLaunchData, this.launchesController.addLaunch);
+        this.router.delete(`/:id`, this.launchesController.deleteLaunch);
     }
 }
 

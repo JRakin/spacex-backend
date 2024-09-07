@@ -4,7 +4,20 @@ import LaunchesController from './launches.controller';
 import LaunchService from '../services/launches.service';
 import { ILaunch } from '../interfaces/launches.interface';
 
-jest.mock('../services/launches.service');
+jest.mock('../services/launches.service', () => {
+    return {
+      __esModule: true,
+      default: {
+        getInstance: jest.fn().mockReturnValue({
+          getAllSpaceXLaunches: jest.fn(),
+          findAllLaunches: jest.fn(),
+          isLaunchExists: jest.fn(),
+          createLaunch: jest.fn(),
+          deleteLaunchById: jest.fn(),
+        } as unknown as LaunchService),
+      },
+    };
+  });
 
 describe('LaunchesController', () => {
   let launchesController: LaunchesController;
@@ -13,7 +26,7 @@ describe('LaunchesController', () => {
   let next: NextFunction;
 
   beforeEach(() => {
-    launchesController = new LaunchesController();
+    launchesController = LaunchesController.getInstance();
 
     req = {};
     res = {
@@ -26,7 +39,7 @@ describe('LaunchesController', () => {
   describe('getSpaceXLaunches', () => {
     it('should return all SpaceX launches with status 200', async () => {
       const mockLaunches: ILaunch[] = [{ flight_number: 1, name: 'Falcon 1', date_utc: new Date('2006-03-24T22:30:00.000Z') }];
-      (LaunchService.prototype.getAllSpaceXLaunches as jest.Mock).mockResolvedValue(mockLaunches);
+      (LaunchService.getInstance().getAllSpaceXLaunches as jest.Mock).mockResolvedValue(mockLaunches);
 
       await launchesController.getSpaceXLaunches(req as Request, res as Response, next);
 
@@ -36,7 +49,7 @@ describe('LaunchesController', () => {
 
     it('should call next with error if service fails', async () => {
       const error = new Error('Service error');
-      (LaunchService.prototype.getAllSpaceXLaunches as jest.Mock).mockRejectedValue(error);
+      (LaunchService.getInstance().getAllSpaceXLaunches as jest.Mock).mockRejectedValue(error);
 
       await launchesController.getSpaceXLaunches(req as Request, res as Response, next);
 
@@ -47,7 +60,7 @@ describe('LaunchesController', () => {
   describe('getLaunches', () => {
     it('should return all launches from the database with status 200', async () => {
       const mockLaunches: ILaunch[] = [{ flight_number: 1, name: 'Falcon 1', date_utc: new Date('2006-03-24T22:30:00.000Z') }];
-      (LaunchService.prototype.findAllLaunches as jest.Mock).mockResolvedValue(mockLaunches);
+      (LaunchService.getInstance().findAllLaunches as jest.Mock).mockResolvedValue(mockLaunches);
 
       await launchesController.getLaunches(req as Request, res as Response, next);
 
@@ -57,7 +70,7 @@ describe('LaunchesController', () => {
 
     it('should call next with error if service fails', async () => {
       const error = new Error('Service error');
-      (LaunchService.prototype.findAllLaunches as jest.Mock).mockRejectedValue(error);
+      (LaunchService.getInstance().findAllLaunches as jest.Mock).mockRejectedValue(error);
 
       await launchesController.getLaunches(req as Request, res as Response, next);
 
@@ -70,8 +83,8 @@ describe('LaunchesController', () => {
       const mockLaunch: ILaunch = { flight_number: 2, name: 'Falcon 2', date_utc: new Date('2007-03-24T22:30:00.000Z') };
       req.body = mockLaunch;
 
-      (LaunchService.prototype.launchExists as jest.Mock).mockResolvedValue(false);
-      (LaunchService.prototype.createLaunch as jest.Mock).mockResolvedValue(mockLaunch);
+      (LaunchService.getInstance().isLaunchExists as jest.Mock).mockResolvedValue(false);
+      (LaunchService.getInstance().createLaunch as jest.Mock).mockResolvedValue(mockLaunch);
 
       await launchesController.addLaunch(req as Request, res as Response, next);
 
@@ -83,7 +96,7 @@ describe('LaunchesController', () => {
       const mockLaunch: ILaunch = { flight_number: 2, name: 'Falcon 2', date_utc: new Date('2007-03-24T22:30:00.000Z') };
       req.body = mockLaunch;
 
-      (LaunchService.prototype.launchExists as jest.Mock).mockResolvedValue(true);
+      (LaunchService.getInstance().isLaunchExists as jest.Mock).mockResolvedValue(true);
 
       await launchesController.addLaunch(req as Request, res as Response, next);
 
@@ -98,8 +111,8 @@ describe('LaunchesController', () => {
         name: 'Test Launch',
         date_utc: '2024-01-01T00:00:00Z',
       };
-      (LaunchService.prototype.launchExists as jest.Mock).mockResolvedValue(false);
-      (LaunchService.prototype.createLaunch as jest.Mock).mockRejectedValue(error);
+      (LaunchService.getInstance().isLaunchExists as jest.Mock).mockResolvedValue(false);
+      (LaunchService.getInstance().createLaunch as jest.Mock).mockRejectedValue(error);
 
       await launchesController.addLaunch(req as Request, res as Response, next);
 
@@ -111,7 +124,7 @@ describe('LaunchesController', () => {
     it('should delete a launch and return status 200', async () => {
       req.params = { id: '1' };
 
-      (LaunchService.prototype.deleteLaunchById as jest.Mock).mockResolvedValue(true);
+      (LaunchService.getInstance().deleteLaunchById as jest.Mock).mockResolvedValue(true);
 
       await launchesController.deleteLaunch(req as Request, res as Response, next);
 
@@ -122,7 +135,7 @@ describe('LaunchesController', () => {
     it('should return 404 if launch not found', async () => {
       req.params = { id: '1' };
 
-      (LaunchService.prototype.deleteLaunchById as jest.Mock).mockResolvedValue(false);
+      (LaunchService.getInstance().deleteLaunchById as jest.Mock).mockResolvedValue(false);
 
       await launchesController.deleteLaunch(req as Request, res as Response, next);
 
@@ -133,7 +146,7 @@ describe('LaunchesController', () => {
     it('should call next with error if service fails', async () => {
       const error = new Error('Service error');
       req.params = { id: '1' };
-      (LaunchService.prototype.deleteLaunchById as jest.Mock).mockRejectedValue(error);
+      (LaunchService.getInstance().deleteLaunchById as jest.Mock).mockRejectedValue(error);
 
       await launchesController.deleteLaunch(req as Request, res as Response, next);
 
