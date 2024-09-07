@@ -27,7 +27,7 @@ class LaunchesController {
     public addLaunch = async (req: LaunchRequest, res: Response, next: NextFunction) => {
         try {
             const launchData: ILaunch = req.body;
-            const exists = await this.launchService.launchExists(launchData.flight_number);
+            const exists = await this.launchService.launchExists(launchData.flight_number, launchData.date_utc);
 
             if (exists) {
                 return res.status(409).json({ message: 'Launch already exists' });

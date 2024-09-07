@@ -1,11 +1,14 @@
 import axios from "axios";
 import { ILaunch } from "../interfaces/launches.interface";
 import Launch, { LaunchDocument } from "../models/launch.model";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 class FlightService {
     private launches = Launch;
-    private SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query';
+    private SPACEX_API_URL = `${process.env.SPACEX_API_URI}`;
 
     public async getAllSpaceXLaunches(): Promise<ILaunch[]> {
         const queryPayload = {
@@ -17,7 +20,20 @@ class FlightService {
             },
           };
         const response = await axios.post(this.SPACEX_API_URL, queryPayload);
-        return response.data?.docs;
+        const launches = await this.findAllLaunches();
+
+        const apiLaunches = response.data?.docs;
+
+        const dbKeys = new Set(
+          launches.map(launch => `${launch.flight_number}|${launch.date_utc}`)
+        );
+
+        const newLaunches = apiLaunches.filter((launch: ILaunch) => {
+          const key = `${launch.flight_number}|${launch.date_utc}`;
+          return !dbKeys.has(key);
+        });
+
+        return newLaunches;
     }
 
     public async findAllLaunches(): Promise<ILaunch[]> {
@@ -35,8 +51,8 @@ class FlightService {
       return await this.launches.findOneAndDelete({ _id: objId });
     }
 
-    async launchExists(flight_number: number): Promise<boolean> {
-      const launch = await this.launches.findOne({ flight_number });
+    async launchExists(flight_number: number, date_utc: Date): Promise<boolean> {
+      const launch = await this.launches.findOne({ flight_number, date_utc });
       return !!launch;
     }
 
