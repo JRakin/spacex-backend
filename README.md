@@ -15,3 +15,13 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### To run test
+```sh
+npm run test
+npm run test:ci
+```
+
+### Additional info for mongodb
+
+some times mongodb does not connect due DNS issue if you encounter any issues related to DNS please switch the network it should work fine

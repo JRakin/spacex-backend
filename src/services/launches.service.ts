@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-class FlightService {
+class LaunchService {
     private launches = Launch;
     private SPACEX_API_URL = `${process.env.SPACEX_API_URI}`;
 
@@ -46,7 +46,7 @@ class FlightService {
       return createdLaunch;
     }
 
-    public async deleteLaunchByFlightNumber(id: string): Promise<LaunchDocument | null> {
+    public async deleteLaunchById(id: string): Promise<LaunchDocument | null> {
       const objId = new mongoose.Types.ObjectId(id)
       return await this.launches.findOneAndDelete({ _id: objId });
     }
@@ -58,4 +58,4 @@ class FlightService {
 
 }
 
-export default FlightService;
+export default LaunchService;

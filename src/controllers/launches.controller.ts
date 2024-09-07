@@ -42,7 +42,7 @@ class LaunchesController {
     public deleteLaunch = async (req: Request, res: Response, next: NextFunction) => {
         const id = req.params.id;
         try {
-            const deletedLaunch = await this.launchService.deleteLaunchByFlightNumber(id);
+            const deletedLaunch = await this.launchService.deleteLaunchById(id);
             if (deletedLaunch) {
                 res.status(200).json({ message: 'Launch deleted successfully' });
               } else {
