@@ -2,6 +2,9 @@
 
 Frontend Link: https://github.com/JRakin/spacex-frontend
 
+## Node version
+Please use node version 18.15.0 or higher.
+
 ## Project Setup
 
 ```sh
