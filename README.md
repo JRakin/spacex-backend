@@ -28,4 +28,7 @@ npm run test:watch
 
 ### Additional info for mongodb
 
-Some times mongodb does not connect due DNS(ISP) issue. If you encounter any issues related to DNS please switch the network and it should work fine.
+Some times mongodb does not connect due DNS(ISP) issue. If you encounter any issues related to DNS please switch the network and it should work fine. 
+
+## .env
+I have kept the .env file open so you do not need to configure MongoDB further.
